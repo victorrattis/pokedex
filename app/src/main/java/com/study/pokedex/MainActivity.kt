@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +42,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.study.pokedex.ui.theme.PokedexTheme
+
+data class PokemonItemDetail(
+    val name: String,
+    val types: List<String>,
+    val sprite: String,
+    val color: Long = 0
+)
+
+val pokemonList: List<PokemonItemDetail> = listOf(
+    PokemonItemDetail("Bulbassaur", listOf("glass", "poison"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png", 0xFF49d0b0),
+    PokemonItemDetail("Ivysaur", listOf("glass", "poison"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png", 0xFF49d0b0),
+    PokemonItemDetail("Venusaur", listOf("glass", "poison"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png", 0xFF49d0b0),
+    PokemonItemDetail("Charmander", listOf("fire"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png", 0xffff6666),
+    PokemonItemDetail("Charmeleon", listOf("fire"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/5.png", 0xffff6666),
+    PokemonItemDetail("Charizard", listOf("fire", "flying"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png", 0xffff6666),
+    PokemonItemDetail("Squirtle", listOf("water"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png", 0xff66ccff),
+    PokemonItemDetail("Wartortle", listOf("water"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/8.png", 0xff66ccff),
+    PokemonItemDetail("Blastoise", listOf("water"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/9.png", 0xff66ccff),
+    PokemonItemDetail("Pichu", listOf("electric"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/172.png", 0xffffd164),
+    PokemonItemDetail("Pikachu", listOf("electric"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png", 0xffffd164),
+    PokemonItemDetail("Raichu", listOf("electric"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/26.png", 0xffffd164),
+    PokemonItemDetail("Caterpie", listOf("bug"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10.png", 0xFF49d0b0),
+    PokemonItemDetail("Metapod", listOf("bug"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/11.png", 0xFF49d0b0),
+    PokemonItemDetail("Butterfree", listOf("bug", "flying"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/12.png", 0xFF49d0b0),
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,12 +132,12 @@ fun HomeContent(modifier: Modifier) {
         modifier = modifier,
         columns = GridCells.Fixed(2)
     ) {
-        items(22) { item ->
+        items(pokemonList) { pokemon ->
             Box(modifier = Modifier
                 .size(150.dp)
                 .padding(5.dp)
                 .clip(RoundedCornerShape(30.dp))
-                .background(Color(0xFF49d0b0))
+                .background(Color(pokemon.color))
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_pokeball_line),
@@ -118,7 +146,6 @@ fun HomeContent(modifier: Modifier) {
                     modifier = Modifier
                         .align(alignment = Alignment.TopEnd)
                         .offset(x = 50.dp, y = 50.dp)
-
                 )
 
                 Column(
@@ -128,21 +155,23 @@ fun HomeContent(modifier: Modifier) {
                     )
                 ) {
                     Text(
-                        text = "Bulbassaur",
+                        text = pokemon.name,
                         style = TextStyle(
                             color = Color.White,
                             fontSize = 16.sp
                         )
                     )
-                    LazyColumn(contentPadding = PaddingValues(top = 5.dp, start = 5.dp  )) {
-                        items(2) {
+                    LazyColumn(
+                        contentPadding = PaddingValues(top = 5.dp, start = 5.dp)
+                    ) {
+                        items(pokemon.types) { type ->
                             Box(modifier = Modifier.padding(0.dp, 3.dp)
                                 .clip(RoundedCornerShape(30.dp))
-                                .background(Color(0xFF62e1c6))
+                                .background(Color(0x42FFFFFF))
                             ) {
                                 Text(
                                     modifier = Modifier.padding(10.dp, 4.dp),
-                                    text = "Glass",
+                                    text = type,
                                     style = TextStyle(
                                         color = Color.White,
                                         fontSize = 14.sp
@@ -154,11 +183,12 @@ fun HomeContent(modifier: Modifier) {
                 }
 
                 AsyncImage(
-                    model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
+                    model = pokemon.sprite,
                     contentDescription = "Translated description of what the image contains",
+                    contentScale = ContentScale.FillHeight,
                     modifier = Modifier
                         .size(100.dp)
-                        .padding(end = 10.dp, bottom = 10.dp)
+                        .padding(end = 10.dp, bottom = 5.dp)
                         .align(alignment = Alignment.BottomEnd)
                 )
             }
