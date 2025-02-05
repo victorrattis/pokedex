@@ -1,12 +1,16 @@
 package com.study.pokedex.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
+import android.util.Log
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PokemonRepository @Inject constructor() {
-    private val pokemonList: List<PokemonDetail> = listOf(
+    private val fakeData: List<PokemonDetail> = listOf(
         PokemonDetail("Bulbassaur", listOf("glass", "poison"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"),
         PokemonDetail("Ivysaur", listOf("glass", "poison"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"),
         PokemonDetail("Venusaur", listOf("glass", "poison"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png"),
@@ -24,5 +28,12 @@ class PokemonRepository @Inject constructor() {
         PokemonDetail("Butterfree", listOf("bug", "flying"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/12.png"),
     )
 
-    fun getPokemonList(): List<PokemonDetail> = pokemonList
+    val pokemonList: Flow<List<PokemonDetail>> = channelFlow {
+        // TODO: This should be removed when adding Retrofit
+        GlobalScope.launch {
+            delay(5000)
+            send(fakeData)
+        }
+        awaitClose()
+    }
 }

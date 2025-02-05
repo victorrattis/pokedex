@@ -1,6 +1,5 @@
 package com.study.pokedex.ui.page.home
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.study.pokedex.R
 import com.study.pokedex.ui.page.home.model.PokemonItemDetail
 
@@ -81,19 +79,24 @@ fun HomePage(viewModel: HomeViewModel = hiltViewModel<HomeViewModel>()) {
             )
         )
 
-        val uiState = viewModel.uiState.observeAsState().value
-        Log.d("devlog", "uiState: $uiState")
-        if (uiState is HomeUiState.Loading) {
-            PokemonDataLoading()
-        } else if (uiState is HomeUiState.Loaded) {
-          if (uiState.pokemonList.isEmpty()) {
-              EmptyContent(Modifier.padding(innerPadding))
-          } else {
-              PokemonVerticalGrid(
-                  uiState.pokemonList,
-                  Modifier.padding(innerPadding)
-              )
-          }
+        val uiState = viewModel.uiState.collectAsState().value
+        when(uiState) {
+            is HomeUiState.Loading -> {
+                PokemonDataLoading()
+            }
+            is HomeUiState.Loaded -> {
+                if (uiState.pokemonList.isEmpty()) {
+                    EmptyContent(Modifier.padding(innerPadding))
+                } else {
+                    PokemonVerticalGrid(
+                        uiState.pokemonList,
+                        Modifier.padding(innerPadding)
+                    )
+                }
+            }
+            is HomeUiState.Error -> {
+                // TODO: Implement UI Error
+            }
         }
     }
 }
