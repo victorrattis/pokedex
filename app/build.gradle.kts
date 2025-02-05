@@ -59,6 +59,7 @@ dependencies {
 
     // Dependency Inject
     implementation(libs.hilt.android)
+    implementation(libs.androidx.runtime.livedata)
     kapt(libs.hilt.android.compiler)
 
     // Dependency Inject works with compose

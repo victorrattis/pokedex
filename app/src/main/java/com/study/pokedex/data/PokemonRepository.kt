@@ -1,5 +1,8 @@
 package com.study.pokedex.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class PokemonRepository @Inject constructor() {
@@ -21,8 +24,5 @@ class PokemonRepository @Inject constructor() {
         PokemonDetail("Butterfree", listOf("bug", "flying"), "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/12.png"),
     )
 
-    fun getPokemonList(): List<PokemonDetail> {
-
-        return pokemonList
-    }
+    fun getPokemonList(): List<PokemonDetail> = pokemonList
 }
