@@ -65,6 +65,9 @@ dependencies {
     // Dependency Inject works with compose
     implementation(libs.androidx.hilt.navigation.compose)
 
+    // Navigate between the pages
+    implementation(libs.androidx.navigation.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

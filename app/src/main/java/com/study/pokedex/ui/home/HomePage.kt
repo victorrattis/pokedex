@@ -1,6 +1,7 @@
 package com.study.pokedex.ui.home
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.study.pokedex.R
+import com.study.pokedex.theme.PokedexTheme
 import kotlin.concurrent.thread
 
 private val fakeData: List<PokemonDetail> = listOf(
@@ -70,66 +72,67 @@ private val fakeData: List<PokemonDetail> = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage() {
-    Scaffold (
-        topBar = {
-            TopAppBar(
-                colors = topAppBarColors(
-                    containerColor = Color.Transparent,
-                    scrolledContainerColor = Color.Transparent
-                ),
-                title = {
-                    Text(
-                        text = stringResource(R.string.pokedex_title),
-                        modifier = Modifier,
-                        style = TextStyle(
-                            fontSize = 23.sp
+    PokedexTheme {
+        Log.d("devlog", "HomePage")
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    colors = topAppBarColors(
+                        containerColor = Color.Transparent,
+                        scrolledContainerColor = Color.Transparent
+                    ),
+                    title = {
+                        Text(
+                            text = stringResource(R.string.pokedex_title),
+                            modifier = Modifier,
+                            style = TextStyle(
+                                fontSize = 23.sp
+                            )
                         )
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {
-                        // TODO: Implement the click action
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            modifier = Modifier.size(80.dp),
-                            contentDescription = ""
-                        )
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            // TODO: Implement the click action
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Menu,
+                                modifier = Modifier.size(80.dp),
+                                contentDescription = ""
+                            )
+                        }
                     }
-                }
-            )
-        }
-    ) { innerPadding ->
-        Image(
-            painter = painterResource(R.drawable.ic_pokeball_line),
-            contentDescription = "",
-            colorFilter = ColorFilter.tint(color = Color(0x18868686)),
-            modifier = Modifier.offset(
-                x = 177.dp,
-                y = (-150).dp
-            )
-        )
-
-        var isLoading by remember { mutableStateOf(true) }
-        val (pokemonList, setValue) = remember { mutableStateOf<List<PokemonItemDetail>>(listOf()) }
-        thread {
-            Thread.sleep(2000)
-//            runOnUiThread {
-            setValue(fakeData.map { toPokemonItemDetail(it) })
-            isLoading = false
-//            }
-        }
-
-        if (isLoading) {
-            PokemonDataLoading()
-        } else {
-            if (pokemonList.isEmpty()) {
-                EmptyContent()
-            } else {
-                PokemonVerticalGrid(
-                    pokemonList,
-                    Modifier.padding(innerPadding)
                 )
+            }
+        ) { innerPadding ->
+            Image(
+                painter = painterResource(R.drawable.ic_pokeball_line),
+                contentDescription = "",
+                colorFilter = ColorFilter.tint(color = Color(0x18868686)),
+                modifier = Modifier.offset(
+                    x = 177.dp,
+                    y = (-150).dp
+                )
+            )
+
+            var isLoading by remember { mutableStateOf(true) }
+            val (pokemonList, setValue) = remember { mutableStateOf<List<PokemonItemDetail>>(listOf()) }
+            thread {
+                Thread.sleep(2000)
+                setValue(fakeData.map { toPokemonItemDetail(it) })
+                isLoading = false
+            }
+
+            if (isLoading) {
+                PokemonDataLoading()
+            } else {
+                if (pokemonList.isEmpty()) {
+                    EmptyContent()
+                } else {
+                    PokemonVerticalGrid(
+                        pokemonList,
+                        Modifier.padding(innerPadding)
+                    )
+                }
             }
         }
     }
