@@ -17,7 +17,7 @@ fun AppNavigation(
     navController: NavHostController = rememberNavController()
 ) {
     Log.d("devlog", "AppNavigation")
-    NavHost(navController = navController, startDestination = "welcome") {
+    NavHost(navController = navController, startDestination = "home") {
         Log.d("devlog", "NavHost")
 
         composable("home") {

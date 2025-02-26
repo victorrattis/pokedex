@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.study.pokedex.theme.PokedexTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -22,22 +21,19 @@ fun WelcomePage(
     modifier: Modifier = Modifier,
     welcomeViewModel: WelcomeViewModel
 ) {
-
-    PokedexTheme {
-        Log.d("devlog", "WelcomePage")
-        Scaffold {
-            welcomeViewModel.initialize()
-            Column(
-                modifier = modifier.fillMaxSize()
-                    .wrapContentSize(Alignment.Center)
-            ) {
-                Text(
-                    text = "Welcome",
-                    modifier = Modifier.padding(16.dp),
-                    textAlign = TextAlign.Center,
-                    style = typography.bodyLarge,
-                )
-            }
+    Log.d("devlog", "WelcomePage")
+    Scaffold {
+        welcomeViewModel.initialize()
+        Column(
+            modifier = modifier.fillMaxSize()
+                .wrapContentSize(Alignment.Center)
+        ) {
+            Text(
+                text = "Welcome",
+                modifier = Modifier.padding(16.dp),
+                textAlign = TextAlign.Center,
+                style = typography.bodyLarge,
+            )
         }
     }
 }

@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
 
+    // Inject viewmodel via compose without a complete dependency inject
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // Dependency Inject
@@ -65,8 +66,14 @@ dependencies {
     // Dependency Inject works with compose
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // Navigate between the pages
+    // Navigate between the compose pages
     implementation(libs.androidx.navigation.compose)
+
+    // Send HTTP request to remote service
+    implementation(libs.retrofit)
+
+    // Convert the response body of the request response from JSON to class
+    implementation(libs.converter.gson)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
