@@ -2,26 +2,28 @@ package com.study.pokedex.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.study.pokedex.data.PokemonRepository
 import com.study.pokedex.domain.PokemonDetail
 import com.study.pokedex.ui.home.model.PokemonItemDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     pokemonRepository: PokemonRepository
 ): ViewModel() {
-    val pokemonList: StateFlow<HomeUiState> = pokemonRepository.getPokemonList()
-        .map { toPokemonList(it) }
-        .filter { it.isNotEmpty() }
-        .map { HomeUiState.Success(it) }
-        .stateIn(viewModelScope, SharingStarted.Lazily, HomeUiState.Loading)
+    val pokemonList: Flow<PagingData<PokemonItemDetail>> =
+        pokemonRepository.getPokemonList()
+            .map { it.map { toPokemonItemDetail(it) }  }
+            .flowOn(Dispatchers.IO)
+            .cachedIn(viewModelScope)
 
     // These colors was generated using AI tool
     private val typeToDarkColorMap = mapOf(
@@ -47,7 +49,7 @@ class HomeViewModel @Inject constructor(
         "unknown" to 0xFF526D6D    // Dark Teal
     )
 
-    // This map of colors was generated using AI tool
+    // These colors was generated using AI tool
     private val typeToColorMap = mapOf(
         "normal" to 0xFFA8A77A,
         "fighting" to 0xFFC22E28,
@@ -70,8 +72,6 @@ class HomeViewModel @Inject constructor(
         "stellar" to 0xFFFFD700,
         "unknown" to 0xFF68A090
     )
-
-    private fun toPokemonList(value: List<PokemonDetail>) = value.map { toPokemonItemDetail(it) }
 
     private fun toPokemonItemDetail(value: PokemonDetail) = PokemonItemDetail(
         value.name,

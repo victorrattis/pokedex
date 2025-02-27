@@ -1,5 +1,6 @@
 package com.study.pokedex.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,8 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.study.pokedex.R
 import com.study.pokedex.ui.home.components.PokemonVerticalGrid
 
@@ -77,19 +78,16 @@ fun HomePage(viewModel: HomeViewModel = hiltViewModel()) {
             )
         )
 
-        val uiState: HomeUiState by viewModel.pokemonList.collectAsState()
-        when (uiState) {
-            is HomeUiState.Loading -> {
-                PokemonDataLoading()
-            }
-            is HomeUiState.Success -> {
-                PokemonVerticalGrid(
-                    (uiState as HomeUiState.Success).data,
-                    Modifier.padding(innerPadding)
-                )
-            }
-            is HomeUiState.Error -> {
-            }
+        val items = viewModel.pokemonList.collectAsLazyPagingItems()
+        Log.d("devlog", "Refresh: ${items.loadState.refresh is LoadState.Loading}")
+
+        if (items.loadState.refresh is LoadState.Loading) {
+            PokemonDataLoading()
+        } else {
+            PokemonVerticalGrid(
+                items,
+                Modifier.padding(innerPadding)
+            )
         }
     }
 }
