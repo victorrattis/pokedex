@@ -11,14 +11,19 @@ import com.study.pokedex.ui.home.model.PokemonItemDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import java.lang.Thread.State
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     pokemonRepository: PokemonRepository
 ): ViewModel() {
+    val pokemons: Flow<List<PokemonItemDetail>> =
+        pokemonRepository.getAllPokemonList().map { it.map { toPokemonItemDetail(it) } }
+
     val pokemonList: Flow<PagingData<PokemonItemDetail>> =
         pokemonRepository.getPokemonList()
             .map { it.map { toPokemonItemDetail(it) }  }
@@ -77,6 +82,6 @@ class HomeViewModel @Inject constructor(
         value.name,
         value.types,
         value.sprite,
-        typeToColorMap[value.types.first()] ?: 0xFFA8A77A
+        if (value.types.isEmpty()) 0xFFA8A77A else typeToColorMap[value.types.first()] ?: 0xFFA8A77A
     )
 }

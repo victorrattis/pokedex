@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -78,17 +79,23 @@ fun HomePage(viewModel: HomeViewModel = hiltViewModel()) {
             )
         )
 
-        val items = viewModel.pokemonList.collectAsLazyPagingItems()
-        Log.d("devlog", "Refresh: ${items.loadState.refresh is LoadState.Loading}")
+        val items = viewModel.pokemons.collectAsState(listOf())
+        PokemonVerticalGrid(
+            items,
+            Modifier.padding(innerPadding)
+        )
 
-        if (items.loadState.refresh is LoadState.Loading) {
-            PokemonDataLoading()
-        } else {
-            PokemonVerticalGrid(
-                items,
-                Modifier.padding(innerPadding)
-            )
-        }
+//        val items = viewModel.pokemonList.collectAsLazyPagingItems()
+//        Log.d("devlog", "Refresh: ${items.loadState.refresh is LoadState.Loading}")
+//
+//        if (items.loadState.refresh is LoadState.Loading) {
+//            PokemonDataLoading()
+//        } else {
+//            PokemonVerticalGrid(
+//                items,
+//                Modifier.padding(innerPadding)
+//            )
+//        }
     }
 }
 
