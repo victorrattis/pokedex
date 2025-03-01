@@ -2,33 +2,27 @@ package com.study.pokedex.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.map
 import com.study.pokedex.data.PokemonRepository
 import com.study.pokedex.domain.PokemonDetail
 import com.study.pokedex.ui.home.model.PokemonItemDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import java.lang.Thread.State
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     pokemonRepository: PokemonRepository
 ): ViewModel() {
-    val pokemons: Flow<List<PokemonItemDetail>> =
-        pokemonRepository.getAllPokemonList().map { it.map { toPokemonItemDetail(it) } }
-
-    val pokemonList: Flow<PagingData<PokemonItemDetail>> =
-        pokemonRepository.getPokemonList()
-            .map { it.map { toPokemonItemDetail(it) }  }
-            .flowOn(Dispatchers.IO)
-            .cachedIn(viewModelScope)
+    val pageState: StateFlow<HomeUiState> = pokemonRepository.getAllPokemonList()
+        .map { toPokemonList(it) }
+        .map { HomeUiState.Success(it) }
+        .flowOn(Dispatchers.Default)
+        .stateIn(viewModelScope, SharingStarted.Lazily, HomeUiState.Loading)
 
     // These colors was generated using AI tool
     private val typeToDarkColorMap = mapOf(
@@ -77,6 +71,10 @@ class HomeViewModel @Inject constructor(
         "stellar" to 0xFFFFD700,
         "unknown" to 0xFF68A090
     )
+
+    private fun toPokemonList(value: List<PokemonDetail>) = value.map {
+        toPokemonItemDetail(it)
+    }
 
     private fun toPokemonItemDetail(value: PokemonDetail) = PokemonItemDetail(
         value.name,

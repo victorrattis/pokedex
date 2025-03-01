@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.android.hilt)
+    alias(libs.plugins.google.ksp)
 }
 
 android {
@@ -83,6 +84,8 @@ dependencies {
     // Add pagination to get the pokemon list remotely
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.androidx.paging.compose)
+
+    //ksp("androidx.room:room-compiler:+")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

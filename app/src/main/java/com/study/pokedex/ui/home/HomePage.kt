@@ -1,6 +1,5 @@
 package com.study.pokedex.ui.home
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,9 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.LoadState
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.study.pokedex.R
+import com.study.pokedex.ui.home.components.LoadingPage
 import com.study.pokedex.ui.home.components.PokemonVerticalGrid
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +69,7 @@ fun HomePage(viewModel: HomeViewModel = hiltViewModel()) {
     ) { innerPadding ->
         Image(
             painter = painterResource(R.drawable.ic_pokeball_line),
-            contentDescription = "",
+            contentDescription = null,
             colorFilter = ColorFilter.tint(color = Color(0x18868686)),
             modifier = Modifier.offset(
                 x = 177.dp,
@@ -79,39 +77,18 @@ fun HomePage(viewModel: HomeViewModel = hiltViewModel()) {
             )
         )
 
-        val items = viewModel.pokemons.collectAsState(listOf())
-        PokemonVerticalGrid(
-            items,
-            Modifier.padding(innerPadding)
-        )
-
-//        val items = viewModel.pokemonList.collectAsLazyPagingItems()
-//        Log.d("devlog", "Refresh: ${items.loadState.refresh is LoadState.Loading}")
-//
-//        if (items.loadState.refresh is LoadState.Loading) {
-//            PokemonDataLoading()
-//        } else {
-//            PokemonVerticalGrid(
-//                items,
-//                Modifier.padding(innerPadding)
-//            )
-//        }
-    }
-}
-
-@Composable
-private fun PokemonDataLoading(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
-
-    ) {
-        Text(
-            text = "Loading...",
-            modifier = Modifier.padding(16.dp),
-            textAlign = TextAlign.Center,
-            style = typography.bodyLarge,
-        )
+        val uiState = viewModel.pageState.collectAsState()
+        when (uiState.value) {
+            is HomeUiState.Loading -> {
+                LoadingPage()
+            }
+            is HomeUiState.Success -> {
+                PokemonVerticalGrid(
+                    (uiState.value as HomeUiState.Success).data,
+                    Modifier.padding(innerPadding)
+                )
+            }
+            is HomeUiState.Error -> {}
+        }
     }
 }
