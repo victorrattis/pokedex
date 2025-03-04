@@ -1,4 +1,4 @@
-package com.study.pokedex.data.remote
+package com.study.pokedex.data
 
 import com.study.pokedex.data.remote.reponse.PokemonDetailResponse
 import com.study.pokedex.data.remote.reponse.PokemonListResponse

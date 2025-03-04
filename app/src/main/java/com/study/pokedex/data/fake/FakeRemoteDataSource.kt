@@ -1,6 +1,6 @@
 package com.study.pokedex.data.fake
 
-import com.study.pokedex.data.remote.IPokemonRemoteDataSource
+import com.study.pokedex.data.IPokemonRemoteDataSource
 import com.study.pokedex.data.remote.reponse.PokemonDetailResponse
 import com.study.pokedex.data.remote.reponse.PokemonItemResponse
 import com.study.pokedex.data.remote.reponse.PokemonListResponse

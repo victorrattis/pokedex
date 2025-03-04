@@ -1,5 +1,6 @@
 package com.study.pokedex.data.remote
 
+import com.study.pokedex.data.IPokemonRemoteDataSource
 import com.study.pokedex.data.remote.reponse.PokemonDetailResponse
 import com.study.pokedex.data.remote.reponse.PokemonListResponse
 import com.study.pokedex.data.utils.LazySuspend

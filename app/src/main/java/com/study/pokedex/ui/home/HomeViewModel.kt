@@ -2,13 +2,17 @@ package com.study.pokedex.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.study.pokedex.data.PokemonFilter
 import com.study.pokedex.data.PokemonRepository
 import com.study.pokedex.domain.PokemonDetail
 import com.study.pokedex.ui.home.model.PokemonItemDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -18,7 +22,11 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     pokemonRepository: PokemonRepository
 ): ViewModel() {
-    val pageState: StateFlow<HomeUiState> = pokemonRepository.getAllPokemonList()
+    val searchQuery = MutableStateFlow<PokemonFilter?>(PokemonFilter(type = "", name = ""))
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val pageState: StateFlow<HomeUiState> = searchQuery
+        .flatMapLatest { pokemonRepository.getAllPokemonList(it) }
         .map { toPokemonList(it) }
         .map { HomeUiState.Success(it) }
         .flowOn(Dispatchers.Default)
@@ -82,4 +90,12 @@ class HomeViewModel @Inject constructor(
         value.sprite,
         if (value.types.isEmpty()) 0xFFA8A77A else typeToColorMap[value.types.first()] ?: 0xFFA8A77A
     )
+
+    fun onSearchTextChanged(value: String) {
+        searchQuery.value = searchQuery.value?.copy(name = value)
+    }
+
+    fun onSearchByPokemonType(value: String) {
+        searchQuery.value = searchQuery.value?.copy(type = value)
+    }
 }
